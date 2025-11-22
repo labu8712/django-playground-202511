@@ -35,3 +35,10 @@ def hello_name(request, name):
 
 def article_detail(request, year, month, slug):
     return HttpResponse(f"文章: {year} 年 {month} 月 - {slug}")
+
+
+def user_articles(request, username):
+    sort = request.GET.get("sort", "newest")
+    page = request.GET.get("page", "1")
+
+    return HttpResponse(f"{username} 的文章, 排序: {sort}, 頁數: {page}")

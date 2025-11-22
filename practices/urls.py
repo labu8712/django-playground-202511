@@ -14,4 +14,9 @@ urlpatterns = [
         views.article_detail,
         name="article_detail",
     ),
+    path(
+        "users/<str:username>/articles/",
+        views.user_articles,
+        name="user_articles",
+    ),
 ]
