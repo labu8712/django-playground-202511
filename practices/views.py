@@ -42,3 +42,19 @@ def user_articles(request, username):
     page = request.GET.get("page", "1")
 
     return HttpResponse(f"{username} 的文章, 排序: {sort}, 頁數: {page}")
+
+
+def advanced_search(request):
+    keyword = request.GET.get("q", "")
+    category = request.GET.get("category", "all")
+    sort = request.GET.get("sort", "newest")
+
+    return render(
+        request,
+        "practices/advanced_search.html",
+        {
+            "keyword": keyword,
+            "category": category,
+            "sort": sort,
+        },
+    )

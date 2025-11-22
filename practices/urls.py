@@ -19,4 +19,5 @@ urlpatterns = [
         views.user_articles,
         name="user_articles",
     ),
+    path("advanced-search/", views.advanced_search, name="advanced_search"),
 ]
