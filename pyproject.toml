@@ -7,3 +7,14 @@ requires-python = ">=3.14"
 dependencies = [
     "django>=5.2.8",
 ]
+
+[dependency-groups]
+check = [
+    "djlint>=1.36.4",
+]
+
+
+[tool.djlint]
+profile = "django"
+max_blank_lines = 1
+line_break_after_multiline_tag = true
