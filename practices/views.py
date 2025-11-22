@@ -31,3 +31,7 @@ def filter_products(request):
 
 def hello_name(request, name):
     return HttpResponse(f"Hello, {name}!")
+
+
+def article_detail(request, year, month, slug):
+    return HttpResponse(f"文章: {year} 年 {month} 月 - {slug}")
