@@ -58,3 +58,12 @@ def advanced_search(request):
             "sort": sort,
         },
     )
+
+
+def color_filter(request):
+    colors = request.GET.getlist("color")
+    return render(
+        request,
+        "practices/color_filter.html",
+        {"colors": colors},
+    )

@@ -20,4 +20,5 @@ urlpatterns = [
         name="user_articles",
     ),
     path("advanced-search/", views.advanced_search, name="advanced_search"),
+    path("color-filter/", views.color_filter, name="color_filter"),
 ]
