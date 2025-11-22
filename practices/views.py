@@ -13,7 +13,7 @@ def greeting(request):
 
 def search(request):
     keyword = request.GET.get("q", "")
-    return HttpResponse(f"Keyword: {keyword}")
+    return render(request, "practices/search.html", {"keyword": keyword})
 
 
 def product_list(request):
