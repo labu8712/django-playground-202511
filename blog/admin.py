@@ -3,6 +3,12 @@ from django.contrib import admin
 from blog.models import Article, Author, Tag
 
 
+class ArticleInline(admin.TabularInline):
+    model = Article
+    extra = 1
+    fields = ["title", "is_published"]
+
+
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ["title", "author", "is_published", "created_at"]
@@ -15,6 +21,7 @@ class ArticleAdmin(admin.ModelAdmin):
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ["name", "email", "created_at"]
+    inlines = [ArticleInline]
 
 
 admin.site.register(Tag)
