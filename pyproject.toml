@@ -12,10 +12,13 @@ dependencies = [
 check = [
     "djlint>=1.36.4",
 ]
+dev = [
+    "ipython>=9.7.0",
+]
 
 
 [tool.uv]
-default-groups = ["check"]
+default-groups = ["dev", "check"]
 
 
 [tool.djlint]
