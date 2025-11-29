@@ -7,6 +7,7 @@ from blog.models import Article, Author, Tag
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ["title", "author", "is_published", "created_at"]
     list_filter = ["is_published", "created_at", "author"]
+    search_fields = ["title", "content", "author__name"]
 
 
 @admin.register(Author)
