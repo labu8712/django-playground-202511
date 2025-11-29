@@ -11,11 +11,21 @@ class ArticleInline(admin.StackedInline):
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ["title", "author", "is_published", "created_at"]
+    list_display = [
+        "title",
+        "author",
+        "is_published",
+        "created_at",
+        "tag_count",
+    ]
     list_filter = ["is_published", "created_at", "author"]
     search_fields = ["title", "content"]
     ordering = ["-created_at"]
     list_per_page = 20
+
+    @admin.display(description="標籤數量")
+    def tag_count(self, obj):
+        return obj.tags.count()
 
 
 @admin.register(Author)
