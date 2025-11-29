@@ -3,10 +3,15 @@ from django.contrib import admin
 from blog.models import Article, Author, Tag
 
 
+@admin.register(Article)
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ["title", "author", "is_published", "created_at"]
+    list_filter = ["is_published", "created_at", "author"]
+
+
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ["name", "email", "created_at"]
 
 
-admin.site.register(Article)
 admin.site.register(Tag)
