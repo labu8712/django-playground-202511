@@ -30,8 +30,12 @@ class ArticleAdmin(admin.ModelAdmin):
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    list_display = ["name", "email", "created_at"]
+    list_display = ["name", "email", "created_at", "has_published_articles"]
     inlines = [ArticleInline]
+
+    @admin.display(description="有已發布的文章", boolean=True)
+    def has_published_articles(self, obj):
+        return obj.articles.filter(is_published=True).exists()
 
 
 admin.site.register(Tag)
