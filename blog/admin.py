@@ -3,10 +3,10 @@ from django.contrib import admin
 from blog.models import Article, Author, Tag
 
 
-class ArticleInline(admin.TabularInline):
+class ArticleInline(admin.StackedInline):
     model = Article
     extra = 1
-    fields = ["title", "is_published"]
+    fields = ["title", "content", "is_published"]
 
 
 @admin.register(Article)
