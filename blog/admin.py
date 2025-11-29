@@ -22,10 +22,21 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ["title", "content"]
     ordering = ["-created_at"]
     list_per_page = 20
+    actions = ["publish_articles", "unpublish_articles"]
 
     @admin.display(description="標籤數量")
     def tag_count(self, obj):
         return obj.tags.count()
+
+    @admin.action(description="發布選中的文章")
+    def publish_articles(self, request, queryset):
+        count = queryset.update(is_published=True)
+        self.message_user(request, f"成功發布 {count} 篇文章")
+
+    @admin.action(description="取消發布選中的文章")
+    def unpublish_articles(self, request, queryset):
+        count = queryset.update(is_published=False)
+        self.message_user(request, f"成功取消發布 {count} 篇文章")
 
 
 @admin.register(Author)
