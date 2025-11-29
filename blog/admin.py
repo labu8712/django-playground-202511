@@ -24,6 +24,26 @@ class ArticleAdmin(admin.ModelAdmin):
     list_per_page = 20
     actions = ["publish_articles", "unpublish_articles"]
     filter_vertical = ["tags"]
+    fieldsets = [
+        (
+            "基本資訊",
+            {"fields": ["title", "content"]},
+        ),
+        (
+            "進階選項",
+            {
+                "fields": ["author", "tags", "is_published"],
+                "classes": ["collapse"],
+            },
+        ),
+        (
+            "時間資訊",
+            {
+                "fields": ["created_at", "updated_at"],
+            },
+        ),
+    ]
+    readonly_fields = ["created_at", "updated_at"]
 
     @admin.display(description="標籤數量")
     def tag_count(self, obj):
