@@ -23,6 +23,7 @@ class ArticleAdmin(admin.ModelAdmin):
     ordering = ["-created_at"]
     list_per_page = 20
     actions = ["publish_articles", "unpublish_articles"]
+    filter_vertical = ["tags"]
 
     @admin.display(description="標籤數量")
     def tag_count(self, obj):
