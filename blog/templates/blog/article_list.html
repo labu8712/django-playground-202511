@@ -8,15 +8,13 @@
     <h2>
         文章列表
     </h2>
-    <ul>
+    <div class="article-grid">
         {% for article in articles %}
-            <li>
-                {{ article.title }} - {{ article.author.name }}
-            </li>
+            {% include "blog/components/article_card.html" %}
         {% empty %}
-            <li>
+            <p>
                 目前沒有文章
-            </li>
+            </p>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock content %}
