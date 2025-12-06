@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+    文章列表 - Django 大冒險
+{% endblock title %}
+
+{% block content %}
+    <h2>
+        文章列表
+    </h2>
+    <ul>
+        {% for article in articles %}
+            <li>
+                {{ article.title }} - {{ article.author.name }}
+            </li>
+        {% empty %}
+            <li>
+                目前沒有文章
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock content %}
