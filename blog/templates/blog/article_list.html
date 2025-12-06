@@ -5,16 +5,18 @@
 {% endblock title %}
 
 {% block blog_content %}
-    <h2>
+    <h2 class="mb-4">
         文章列表
     </h2>
-    <div class="article-grid">
+    <div class="row">
         {% for article in articles %}
             {% include "blog/components/article_card.html" %}
         {% empty %}
-            <p>
-                目前沒有文章
-            </p>
+            <div class="col-12">
+                <div class="alert alert-info">
+                    目前沒有文章
+                </div>
+            </div>
         {% endfor %}
     </div>
 {% endblock blog_content %}
