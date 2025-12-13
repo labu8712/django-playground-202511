@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 
+from blog.forms import ArticleForm
 from blog.models import Article, Author
 
 
@@ -18,37 +19,24 @@ def article_detail(request, article_id):
 
 def article_create(request):
     authors = Author.objects.all()
-    errors = {}
 
     if request.method == "POST":
-        title = request.POST.get("title", "").strip()
-        content = request.POST.get("content", "").strip()
-        author_id = request.POST.get("author")
-
-        if not title:
-            errors["title"] = "標題不能空白"
-        elif len(title) > 200:
-            errors["title"] = "標題最多 200 字元"
-
-        if not content:
-            errors["content"] = "內容不能空白"
-
-        if not errors:
+        form = ArticleForm(request.POST)
+        if form.is_valid():
             article = Article.objects.create(
-                title=title,
-                content=content,
-                author_id=author_id if author_id else None,
+                title=form.cleaned_data["title"],
+                content=form.cleaned_data["content"],
+                author_id=form.cleaned_data["author"],
             )
             return redirect("blog:article_detail", article_id=article.id)
+    else:
+        form = ArticleForm()
 
     return render(
         request,
         "blog/article_create.html",
         {
+            "form": form,
             "authors": authors,
-            "errors": errors,
-            "title": request.POST.get("title", ""),
-            "content": request.POST.get("content", ""),
-            "author_id": request.POST.get("author", ""),
         },
     )
