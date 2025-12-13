@@ -21,11 +21,7 @@ def article_create(request):
     if request.method == "POST":
         form = ArticleForm(request.POST)
         if form.is_valid():
-            article = Article.objects.create(
-                title=form.cleaned_data["title"],
-                content=form.cleaned_data["content"],
-                author_id=form.cleaned_data["author"] or None,
-            )
+            article = form.save()
             return redirect("blog:article_detail", article_id=article.id)
     else:
         form = ArticleForm()
