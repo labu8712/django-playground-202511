@@ -4,7 +4,7 @@ from blog.models import Article
 
 
 def article_list(request):
-    articles = Article.objects.all()
+    articles = Article.objects.select_related("author").all()
     return render(request, "blog/article_list.html", {"articles": articles})
 
 
