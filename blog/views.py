@@ -18,16 +18,9 @@ def article_detail(request, article_id):
 
 
 def article_create(request):
-    if request.method == "POST":
-        form = ArticleForm(request.POST)
-        if form.is_valid():
-            article = form.save()
-            return redirect("blog:article_detail", article_id=article.id)
-    else:
-        form = ArticleForm()
+    form = ArticleForm(request.POST or None)
+    if form.is_valid():
+        article = form.save()
+        return redirect("blog:article_detail", article_id=article.id)
 
-    return render(
-        request,
-        "blog/article_create.html",
-        {"form": form},
-    )
+    return render(request, "blog/article_create.html", {"form": form})
