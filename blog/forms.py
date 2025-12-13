@@ -32,3 +32,14 @@ class ArticleForm(forms.ModelForm):
             raise forms.ValidationError(error_message)
 
         return title
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        title = cleaned_data.get("title")
+        content = cleaned_data.get("content")
+
+        if title == content:
+            raise forms.ValidationError("內容不應與標題完全相等")
+
+        return cleaned_data

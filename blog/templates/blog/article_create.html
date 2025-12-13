@@ -13,6 +13,8 @@
                 建立文章
             </h2>
 
+            {% bootstrap_form_errors form type='non_fields' %}
+
             <form method="post">
                 {% csrf_token %}
 
