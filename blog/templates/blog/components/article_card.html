@@ -16,7 +16,7 @@
                 <small class="text-muted">
                     {{ article.created_at|date:"Y-m-d" }}
                 </small>
-                <a href="{% url 'article_detail' article.id %}"
+                <a href="{% url 'blog:article_detail' article.id %}"
                    class="btn btn-primary btn-sm">
                     閱讀更多
                 </a>
