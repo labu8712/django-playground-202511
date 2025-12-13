@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 
 from blog.forms import ArticleForm
-from blog.models import Article, Author
+from blog.models import Article
 
 
 def article_list(request):
@@ -18,15 +18,13 @@ def article_detail(request, article_id):
 
 
 def article_create(request):
-    authors = Author.objects.all()
-
     if request.method == "POST":
         form = ArticleForm(request.POST)
         if form.is_valid():
             article = Article.objects.create(
                 title=form.cleaned_data["title"],
                 content=form.cleaned_data["content"],
-                author_id=form.cleaned_data["author"],
+                author_id=form.cleaned_data["author"] or None,
             )
             return redirect("blog:article_detail", article_id=article.id)
     else:
@@ -35,8 +33,5 @@ def article_create(request):
     return render(
         request,
         "blog/article_create.html",
-        {
-            "form": form,
-            "authors": authors,
-        },
+        {"form": form},
     )
