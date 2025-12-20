@@ -6,8 +6,24 @@ from blog.models import Article
 
 
 def article_list(request):
+    # 從 GET 參數取得篩選條件
+    search = request.GET.get("search", "")
+    author_id = request.GET.get("author", "")
+
+    # 建立基本 QuerySet
     articles = Article.objects.select_related("author").prefetch_related("tags")
-    return render(request, "blog/article_list.html", {"articles": articles})
+
+    # 根據搜尋關鍵字篩選標題
+    if search:
+        articles = articles.filter(title__icontains=search)
+
+    # 根據作者篩選
+    if author_id:
+        articles = articles.filter(author_id=author_id)
+
+    return render(
+        request, "blog/article_list.html", {"articles": articles, "search": search}
+    )
 
 
 def article_detail(request, article_id):
