@@ -6,11 +6,12 @@ from blog.models import Article
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ["title", "content", "author"]
+        fields = ["title", "content", "author", "tags"]
         labels = {
             "title": "標題",
             "content": "內容",
             "author": "作者",
+            "tags": "標籤",
         }
         error_messages = {
             "title": {
@@ -23,6 +24,7 @@ class ArticleForm(forms.ModelForm):
         }
         widgets = {
             "content": forms.Textarea(attrs={"rows": 10}),
+            "tags": forms.CheckboxSelectMultiple(),
         }
 
     def clean_title(self):
