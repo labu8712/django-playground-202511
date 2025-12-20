@@ -51,15 +51,32 @@
         </div>
     </div>
 
-    <div class="row">
-        {% for article in filter.qs %}
-            {% include "blog/components/article_card.html" %}
-        {% empty %}
-            <div class="col-12">
-                <div class="alert alert-info">
-                    沒有符合條件的文章
-                </div>
+    <form method="post" action="">
+        {% csrf_token %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="select-all-article">
+                <label for="select-all-article">
+                    全選
+                </label>
             </div>
-        {% endfor %}
-    </div>
+            <button type="submit" class="btn btn-danger">
+                批次刪除
+            </button>
+        </div>
+
+        <div class="row">
+            {% for article in filter.qs %}
+                {% include "blog/components/article_card.html" with show_check_box=True %}
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        沒有符合條件的文章
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </form>
+
 {% endblock blog_content %}
