@@ -34,3 +34,9 @@ def article_edit(request, article_id):
         return redirect("blog:article_detail", article_id=article.id)
 
     return render(request, "blog/article_edit.html", {"form": form, "article": article})
+
+
+def article_delete(request, article_id):
+    article = get_object_or_404(Article, id=article_id)
+    article.delete()
+    return redirect("blog:article_list")
