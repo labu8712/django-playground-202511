@@ -12,4 +12,7 @@ urlpatterns = [
     path(
         "articles/<int:article_id>/delete/", views.article_delete, name="article_delete"
     ),
+    path(
+        "articles/bulk-delete/", views.article_bulk_delete, name="article_bulk_delete"
+    ),
 ]

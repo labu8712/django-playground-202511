@@ -52,3 +52,15 @@ def article_delete(request, article_id):
         return redirect("blog:article_list")
 
     return render(request, "blog/article_delete.html", {"article": article})
+
+
+def article_bulk_delete(request):
+    if request.method == "POST":
+        article_ids = request.POST.getlist("article_ids")
+        if article_ids:
+            deleted_count, _ = Article.objects.filter(id__in=article_ids).delete()
+            messages.success(request, f"已成功刪除 {deleted_count} 篇文章")
+        else:
+            messages.warning(request, "請先選取至少一個要刪除的文章")
+
+    return redirect("blog:article_list")

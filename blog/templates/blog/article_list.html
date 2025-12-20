@@ -23,6 +23,14 @@
             });
         });
     </script>
+
+    <script>
+        document.getElementById('select-all-article').addEventListener('change', function() {
+            document.querySelectorAll('.article-checkbox').forEach((checkbox) => {
+                checkbox.checked = this.checked
+            })
+        })
+    </script>
 {% endblock extra_scripts %}
 
 {% block blog_content %}
@@ -51,7 +59,7 @@
         </div>
     </div>
 
-    <form method="post" action="">
+    <form method="post" action="{% url "blog:article_bulk_delete" %}">
         {% csrf_token %}
 
         <div class="d-flex justify-content-between align-items-center mb-3">
