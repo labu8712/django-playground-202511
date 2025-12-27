@@ -147,3 +147,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SHELL_PLUS_PRINT_SQL_TRUNCATE = None
 
 RUNSERVER_PLUS_PRINT_SQL_TRUNCATE = None
+
+
+# Auth
+
+LOGIN_REDIRECT_URL = "blog:article_list"
+
+LOGIN_URL = "auth:login"
