@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from blog.filters import ArticleFilter
@@ -22,6 +23,7 @@ def article_detail(request, article_id):
     return render(request, "blog/article_detail.html", {"article": article})
 
 
+@login_required
 def article_create(request):
     form = ArticleForm(request.POST or None)
     if form.is_valid():
@@ -32,6 +34,7 @@ def article_create(request):
     return render(request, "blog/article_create.html", {"form": form})
 
 
+@login_required
 def article_edit(request, article_id):
     article = get_object_or_404(Article, id=article_id)
     form = ArticleForm(request.POST or None, instance=article)
@@ -43,6 +46,7 @@ def article_edit(request, article_id):
     return render(request, "blog/article_edit.html", {"form": form, "article": article})
 
 
+@login_required
 def article_delete(request, article_id):
     article = get_object_or_404(Article, id=article_id)
 
@@ -54,6 +58,7 @@ def article_delete(request, article_id):
     return render(request, "blog/article_delete.html", {"article": article})
 
 
+@login_required
 def article_bulk_delete(request):
     if request.method == "POST":
         article_ids = request.POST.getlist("article_ids")
