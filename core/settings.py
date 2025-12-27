@@ -156,3 +156,10 @@ LOGIN_REDIRECT_URL = "blog:article_list"
 LOGIN_URL = "auth:login"
 
 LOGOUT_REDIRECT_URL = "auth:login"
+
+
+# Email
+
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+
+EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
