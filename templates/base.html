@@ -40,6 +40,20 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'admin:index' %}">管理後台</a>
                         </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <form method="post" action="{% url 'auth:logout' %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="nav-link btn btn-link">
+                                        登出 ({{ user.username }})
+                                    </button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'auth:login' %}">登入</a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

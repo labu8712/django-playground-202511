@@ -154,3 +154,5 @@ RUNSERVER_PLUS_PRINT_SQL_TRUNCATE = None
 LOGIN_REDIRECT_URL = "blog:article_list"
 
 LOGIN_URL = "auth:login"
+
+LOGOUT_REDIRECT_URL = "auth:login"
