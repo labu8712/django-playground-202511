@@ -2,18 +2,17 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView
+from django_filters.views import FilterView
 
 from blog.filters import ArticleFilter
 from blog.forms import ArticleForm
 from blog.models import Article
 
 
-def article_list(request):
-    filter_ = ArticleFilter(
-        request.GET or None,
-        queryset=Article.objects.select_related("author").prefetch_related("tags"),
-    )
-    return render(request, "blog/article_list.html", {"filter": filter_})
+class ArticleListView(FilterView):
+    queryset = Article.objects.select_related("author").prefetch_related("tags")
+    filterset_class = ArticleFilter
+    template_name = "blog/article_list.html"
 
 
 class ArticleDetailView(DetailView):
