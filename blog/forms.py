@@ -6,7 +6,7 @@ from blog.models import Article
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ["title", "content", "author", "tags"]
+        fields = ["title", "content", "author", "tags", "cover_image"]
         labels = {
             "title": "標題",
             "content": "內容",

@@ -25,7 +25,7 @@ def article_detail(request, article_id):
 
 @permission_required("blog.add_article", raise_exception=True)
 def article_create(request):
-    form = ArticleForm(request.POST or None)
+    form = ArticleForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         article = form.save(commit=False)
         article.created_by = request.user
@@ -40,7 +40,7 @@ def article_create(request):
 @permission_required("blog.change_article", raise_exception=True)
 def article_edit(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-    form = ArticleForm(request.POST or None, instance=article)
+    form = ArticleForm(request.POST or None, request.FILES or None, instance=article)
     if form.is_valid():
         article = form.save()
         messages.success(request, f"文章「{article.title}」已成功更新。")
