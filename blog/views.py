@@ -17,7 +17,7 @@ def article_list(request):
 
 
 class ArticleDetailView(DetailView):
-    model = Article
+    queryset = Article.objects.select_related("author").prefetch_related("tags")
     pk_url_kwarg = "article_id"
 
 
