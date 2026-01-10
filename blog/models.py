@@ -22,6 +22,11 @@ class Tag(models.Model):
 class Article(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
+    cover_image = models.ImageField(
+        upload_to="articles/covers/",
+        blank=True,
+        null=True,
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
