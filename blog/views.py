@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import DetailView
+from django.views.generic import CreateView, DetailView
 from django_filters.views import FilterView
 
 from blog.filters import ArticleFilter
@@ -20,17 +20,18 @@ class ArticleDetailView(DetailView):
     pk_url_kwarg = "article_id"
 
 
-@permission_required("blog.add_article", raise_exception=True)
-def article_create(request):
-    form = ArticleForm(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        article = form.save(commit=False)
-        article.created_by = request.user
-        article.save()
-        messages.success(request, f"文章「{article.title}」已成功建立。")
-        return redirect("blog:article_detail", article_id=article.id)
+class ArticleCreateView(CreateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = "blog/article_create.html"
 
-    return render(request, "blog/article_create.html", {"form": form})
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.created_by = self.request.user
+        self.object.save()
+        form.save_m2m()
+        messages.success(self.request, f"文章「{self.object.title}」已成功建立。")
+        return redirect(self.get_success_url())
 
 
 @permission_required("blog.change_article", raise_exception=True)
