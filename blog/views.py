@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
 
 from blog.filters import ArticleFilter
@@ -34,16 +34,16 @@ class ArticleCreateView(CreateView):
         return redirect(self.get_success_url())
 
 
-@permission_required("blog.change_article", raise_exception=True)
-def article_edit(request, article_id):
-    article = get_object_or_404(Article, id=article_id)
-    form = ArticleForm(request.POST or None, request.FILES or None, instance=article)
-    if form.is_valid():
-        article = form.save()
-        messages.success(request, f"文章「{article.title}」已成功更新。")
-        return redirect("blog:article_detail", article_id=article.id)
+class ArticleUpdateView(UpdateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = "blog/article_edit.html"
+    pk_url_kwarg = "article_id"
 
-    return render(request, "blog/article_edit.html", {"form": form, "article": article})
+    def form_valid(self, form):
+        self.object = form.save()
+        messages.success(self.request, f"文章「{self.object.title}」已成功更新。")
+        return redirect(self.get_success_url())
 
 
 @permission_required("blog.delete_article", raise_exception=True)
