@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import DetailView
 
 from blog.filters import ArticleFilter
 from blog.forms import ArticleForm
@@ -15,12 +16,9 @@ def article_list(request):
     return render(request, "blog/article_list.html", {"filter": filter_})
 
 
-def article_detail(request, article_id):
-    article = get_object_or_404(
-        Article.objects.select_related("author").prefetch_related("tags"),
-        id=article_id,
-    )
-    return render(request, "blog/article_detail.html", {"article": article})
+class ArticleDetailView(DetailView):
+    model = Article
+    pk_url_kwarg = "article_id"
 
 
 @permission_required("blog.add_article", raise_exception=True)
@@ -30,7 +28,6 @@ def article_create(request):
         article = form.save(commit=False)
         article.created_by = request.user
         article.save()
-        form.save_m2m()
         messages.success(request, f"文章「{article.title}」已成功建立。")
         return redirect("blog:article_detail", article_id=article.id)
 
