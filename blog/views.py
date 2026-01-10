@@ -27,7 +27,10 @@ def article_detail(request, article_id):
 def article_create(request):
     form = ArticleForm(request.POST or None)
     if form.is_valid():
-        article = form.save()
+        article = form.save(commit=False)
+        article.created_by = request.user
+        article.save()
+        form.save_m2m()
         messages.success(request, f"文章「{article.title}」已成功建立。")
         return redirect("blog:article_detail", article_id=article.id)
 
