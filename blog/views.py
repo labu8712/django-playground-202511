@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
@@ -21,10 +22,12 @@ class ArticleDetailView(DetailView):
     pk_url_kwarg = "article_id"
 
 
-class ArticleCreateView(CreateView):
+class ArticleCreateView(PermissionRequiredMixin, CreateView):
     model = Article
     form_class = ArticleForm
     template_name = "blog/article_create.html"
+    permission_required = "blog.add_article"
+    raise_exception = True
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -35,11 +38,13 @@ class ArticleCreateView(CreateView):
         return redirect(self.get_success_url())
 
 
-class ArticleUpdateView(UpdateView):
+class ArticleUpdateView(PermissionRequiredMixin, UpdateView):
     model = Article
     form_class = ArticleForm
     template_name = "blog/article_edit.html"
     pk_url_kwarg = "article_id"
+    permission_required = "blog.change_article"
+    raise_exception = True
 
     def form_valid(self, form):
         self.object = form.save()
@@ -47,11 +52,13 @@ class ArticleUpdateView(UpdateView):
         return redirect(self.get_success_url())
 
 
-class ArticleDeleteView(DeleteView):
+class ArticleDeleteView(PermissionRequiredMixin, DeleteView):
     model = Article
     template_name = "blog/article_delete.html"
     pk_url_kwarg = "article_id"
     success_url = reverse_lazy("blog:article_list")
+    permission_required = "blog.delete_article"
+    raise_exception = True
 
     def form_valid(self, form):
         messages.success(self.request, f"文章「{self.object.title}」已成功刪除。")
