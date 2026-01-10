@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
@@ -22,37 +23,30 @@ class ArticleDetailView(DetailView):
     pk_url_kwarg = "article_id"
 
 
-class ArticleCreateView(PermissionRequiredMixin, CreateView):
+class ArticleCreateView(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
     model = Article
     form_class = ArticleForm
     template_name = "blog/article_create.html"
     permission_required = "blog.add_article"
     raise_exception = True
+    success_message = "文章「%(title)s」已成功建立。"
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.created_by = self.request.user
-        self.object.save()
-        form.save_m2m()
-        messages.success(self.request, f"文章「{self.object.title}」已成功建立。")
-        return redirect(self.get_success_url())
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
 
 
-class ArticleUpdateView(PermissionRequiredMixin, UpdateView):
+class ArticleUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Article
     form_class = ArticleForm
     template_name = "blog/article_edit.html"
     pk_url_kwarg = "article_id"
     permission_required = "blog.change_article"
     raise_exception = True
-
-    def form_valid(self, form):
-        self.object = form.save()
-        messages.success(self.request, f"文章「{self.object.title}」已成功更新。")
-        return redirect(self.get_success_url())
+    success_message = "文章「%(title)s」已成功更新。"
 
 
-class ArticleDeleteView(PermissionRequiredMixin, DeleteView):
+class ArticleDeleteView(PermissionRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Article
     template_name = "blog/article_delete.html"
     pk_url_kwarg = "article_id"
@@ -60,10 +54,8 @@ class ArticleDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = "blog.delete_article"
     raise_exception = True
 
-    def form_valid(self, form):
-        messages.success(self.request, f"文章「{self.object.title}」已成功刪除。")
-        self.object.delete()
-        return redirect(self.get_success_url())
+    def get_success_message(self, cleaned_data):
+        return f"文章「{self.object.title}」已成功刪除。"
 
 
 @permission_required("blog.delete_article", raise_exception=True)
