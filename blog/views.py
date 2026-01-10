@@ -1,7 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
-from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
 
 from blog.filters import ArticleFilter
@@ -46,16 +47,16 @@ class ArticleUpdateView(UpdateView):
         return redirect(self.get_success_url())
 
 
-@permission_required("blog.delete_article", raise_exception=True)
-def article_delete(request, article_id):
-    article = get_object_or_404(Article, id=article_id)
+class ArticleDeleteView(DeleteView):
+    model = Article
+    template_name = "blog/article_delete.html"
+    pk_url_kwarg = "article_id"
+    success_url = reverse_lazy("blog:article_list")
 
-    if request.method == "POST":
-        article.delete()
-        messages.success(request, f"文章「{article.title}」已成功刪除。")
-        return redirect("blog:article_list")
-
-    return render(request, "blog/article_delete.html", {"article": article})
+    def form_valid(self, form):
+        messages.success(self.request, f"文章「{self.object.title}」已成功刪除。")
+        self.object.delete()
+        return redirect(self.get_success_url())
 
 
 @permission_required("blog.delete_article", raise_exception=True)
