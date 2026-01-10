@@ -22,6 +22,16 @@
                 {{ article.title }}
             </h1>
 
+            {% if article.cover_image %}
+                <div class="mb-3">
+                    <img src="{{ article.cover_image.url }}"
+                         class="img-fluid"
+                         alt="{{ article.title }}"
+                         height="100%"
+                         width="100%">
+                </div>
+            {% endif %}
+
             <div class="d-flex flex-column flex-md-row align-items-md-center mb-3 text-muted">
                 <span class="me-md-3 mb-2 mb-md-0">
                     <i class="bi bi-person"></i>
@@ -56,16 +66,20 @@
                         <i class="bi bi-arrow-left"></i>
                         <span class="d-none d-sm-inline">返回列表</span>
                     </a>
-                    <a href="{% url 'blog:article_edit' article_id=article.id %}"
-                       class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-pencil"></i>
-                        <span class="d-none d-sm-inline">編輯</span>
-                    </a>
-                    <a href="{% url 'blog:article_delete' article_id=article.id %}"
-                       class="btn btn-outline-danger btn-sm">
-                        <i class="bi bi-trash"></i>
-                        <span class="d-none d-sm-inline">刪除</span>
-                    </a>
+                    {% if perms.blog.change_article %}
+                        <a href="{% url 'blog:article_edit' article_id=article.id %}"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil"></i>
+                            <span class="d-none d-sm-inline">編輯</span>
+                        </a>
+                    {% endif %}
+                    {% if perms.blog.delete_article %}
+                        <a href="{% url 'blog:article_delete' article_id=article.id %}"
+                           class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                            <span class="d-none d-sm-inline">刪除</span>
+                        </a>
+                    {% endif %}
                 </div>
                 <small class="text-muted d-none d-md-inline">
                     最後更新：{{ article.updated_at|date:"Y-m-d" }}
