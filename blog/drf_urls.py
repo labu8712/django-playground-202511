@@ -5,6 +5,10 @@ from blog import drf_views
 app_name = "drf-blog"
 
 urlpatterns = [
-    path("articles", drf_views.article_list, name="article-list"),
-    path("articles/<int:pk>", drf_views.article_detail, name="article-detail"),
+    path("articles", drf_views.ArticleListAPIView.as_view(), name="article-list"),
+    path(
+        "articles/<int:pk>",
+        drf_views.ArticleDetailAPIView.as_view(),
+        name="article-detail",
+    ),
 ]

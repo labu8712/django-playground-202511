@@ -1,22 +1,25 @@
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
-@api_view(["GET", "POST"])
-def article_list(request):
+class ArticleListAPIView(APIView):
     """文章列表 API"""
-    if request.method == "GET":
+
+    def get(self, request):
         return Response({"message": "文章列表"})
-    elif request.method == "POST":
+
+    def post(self, request):
         return Response({"message": "新增文章"}, status=201)
 
 
-@api_view(["GET", "PUT", "DELETE"])
-def article_detail(request, pk):
+class ArticleDetailAPIView(APIView):
     """文章詳情 API"""
-    if request.method == "GET":
+
+    def get(self, request, pk):
         return Response({"message": f"取得文章 {pk}"})
-    elif request.method == "PUT":
+
+    def put(self, request, pk):
         return Response({"message": f"更新文章 {pk}"})
-    elif request.method == "DELETE":
+
+    def delete(self, request, pk):
         return Response({"message": f"刪除文章 {pk}"}, status=204)
