@@ -1,14 +1,10 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from blog import drf_views
 
 app_name = "drf-blog"
 
-urlpatterns = [
-    path("articles", drf_views.ArticleListAPIView.as_view(), name="article-list"),
-    path(
-        "articles/<int:pk>",
-        drf_views.ArticleDetailAPIView.as_view(),
-        name="article-detail",
-    ),
-]
+router = DefaultRouter(trailing_slash=False)
+router.register("articles", drf_views.ArticleViewSet)
+
+urlpatterns = router.urls
