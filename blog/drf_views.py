@@ -32,11 +32,45 @@ class ArticleListAPIView(APIView):
 class ArticleDetailAPIView(APIView):
     """文章詳情 API"""
 
+    def get_object(self, pk):
+        return Article.objects.get(pk=pk)
+
     def get(self, request, pk):
-        return Response({"message": f"取得文章 {pk}"})
+        try:
+            article = self.get_object(pk)
+        except Article.DoesNotExist:
+            return Response(
+                {"detail": "找不到該文章"}, status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = ArticleSerializer(article)
+        return Response(serializer.data)
 
     def put(self, request, pk):
-        return Response({"message": f"更新文章 {pk}"})
+        try:
+            article = self.get_object(pk)
+        except Article.DoesNotExist:
+            return Response(
+                {"detail": "找不到該文章"}, status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = ArticleSerializer(data=request.data)
+        if serializer.is_valid():
+            # 手動更新 Article 物件
+            article.title = serializer.validated_data["title"]
+            article.content = serializer.validated_data["content"]
+            article.is_published = serializer.validated_data.get(
+                "is_published", article.is_published
+            )
+            article.save()
+            output_serializer = ArticleSerializer(article)
+            return Response(output_serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        return Response({"message": f"刪除文章 {pk}"}, status=204)
+        try:
+            article = self.get_object(pk)
+        except Article.DoesNotExist:
+            return Response(
+                {"detail": "找不到該文章"}, status=status.HTTP_404_NOT_FOUND
+            )
+        article.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
