@@ -17,15 +17,8 @@ class ArticleListAPIView(APIView):
     def post(self, request):
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
-            # 手動建立 Article 物件
-            article = Article.objects.create(
-                title=serializer.validated_data["title"],
-                content=serializer.validated_data["content"],
-                is_published=serializer.validated_data.get("is_published", False),
-                created_by=request.user,
-            )
-            output_serializer = ArticleSerializer(article)
-            return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -52,17 +45,10 @@ class ArticleDetailAPIView(APIView):
             return Response(
                 {"detail": "找不到該文章"}, status=status.HTTP_404_NOT_FOUND
             )
-        serializer = ArticleSerializer(data=request.data)
+        serializer = ArticleSerializer(article, data=request.data)
         if serializer.is_valid():
-            # 手動更新 Article 物件
-            article.title = serializer.validated_data["title"]
-            article.content = serializer.validated_data["content"]
-            article.is_published = serializer.validated_data.get(
-                "is_published", article.is_published
-            )
-            article.save()
-            output_serializer = ArticleSerializer(article)
-            return Response(output_serializer.data)
+            serializer.save()
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
