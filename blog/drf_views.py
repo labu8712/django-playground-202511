@@ -1,50 +1,45 @@
-from rest_framework import status
+from rest_framework import mixins
 from rest_framework.generics import GenericAPIView
-from rest_framework.response import Response
 
 from blog.models import Article
 from blog.serializers import ArticleSerializer
 
 
-class ArticleListAPIView(GenericAPIView):
+class ArticleListAPIView(
+    mixins.ListModelMixin, mixins.CreateModelMixin, GenericAPIView
+):
     """文章列表 API"""
 
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
-    def get(self, request):
-        articles = self.get_queryset()
-        serializer = self.get_serializer(articles, many=True)
-        return Response(serializer.data)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(created_by=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        """在建立物件時設定 created_by"""
+        serializer.save(created_by=self.request.user)
 
 
-class ArticleDetailAPIView(GenericAPIView):
+class ArticleDetailAPIView(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    GenericAPIView,
+):
     """文章詳情 API"""
 
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
-    def get(self, request, pk):
-        article = self.get_object()
-        serializer = self.get_serializer(article)
-        return Response(serializer.data)
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
-    def put(self, request, pk):
-        article = self.get_object()
-        serializer = self.get_serializer(article, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
-    def delete(self, request, pk):
-        article = self.get_object()
-        article.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
