@@ -1,15 +1,32 @@
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from blog.models import Article
+from blog.serializers import ArticleSerializer
 
 
 class ArticleListAPIView(APIView):
     """文章列表 API"""
 
     def get(self, request):
-        return Response({"message": "文章列表"})
+        articles = Article.objects.all()
+        serializer = ArticleSerializer(articles, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
-        return Response({"message": "新增文章"}, status=201)
+        serializer = ArticleSerializer(data=request.data)
+        if serializer.is_valid():
+            # 手動建立 Article 物件
+            article = Article.objects.create(
+                title=serializer.validated_data["title"],
+                content=serializer.validated_data["content"],
+                is_published=serializer.validated_data.get("is_published", False),
+                created_by=request.user,
+            )
+            output_serializer = ArticleSerializer(article)
+            return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ArticleDetailAPIView(APIView):

@@ -6,8 +6,15 @@ meta {
 
 post {
   url: http://127.0.0.1:8000/api-drf/blog/articles
-  body: none
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "title": "API",
+    "content": "DRF"
+  }
 }
 
 settings {
