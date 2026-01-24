@@ -7,12 +7,12 @@ from blog.schemas import ArticleIn, ArticleOut
 router = Router()
 
 
-@router.get("/articles", response=list[ArticleOut])
+@router.get("/articles", response=list[ArticleOut], auth=None)
 def list_articles(request):
     return Article.objects.all()
 
 
-@router.get("/articles/{article_id}", response=ArticleOut)
+@router.get("/articles/{article_id}", response=ArticleOut, auth=None)
 def get_article(request, article_id: int):
     return get_object_or_404(Article, id=article_id)
 
