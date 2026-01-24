@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
@@ -71,10 +72,6 @@ auth_urlpatterns = [
 
 urlpatterns = [
     path("", RedirectView.as_view(pattern_name="blog:article_list"), name="root"),
-    path("admin/", admin.site.urls),
-    path("practices/", include("practices.urls")),
-    path("blog/", include("blog.urls")),
-    path("auth/", include((auth_urlpatterns, "auth"))),
     path("api-drf/blog/", include("blog.drf_urls")),
     path("api-drf/token", obtain_auth_token, name="api-token"),
     # API 文件
@@ -88,6 +85,12 @@ urlpatterns = [
     path("api-ninja/", ninja_api.urls),
     # i18n
     path("i18n/", include("django.conf.urls.i18n")),
+    *i18n_patterns(
+        path("admin/", admin.site.urls),
+        path("practices/", include("practices.urls")),
+        path("blog/", include("blog.urls")),
+        path("auth/", include((auth_urlpatterns, "auth"))),
+    ),
 ]
 
 if settings.DEBUG:
