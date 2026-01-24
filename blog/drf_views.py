@@ -1,3 +1,4 @@
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from blog.models import Article
@@ -7,6 +8,7 @@ from blog.serializers import ArticleSerializer
 class ArticleViewSet(ModelViewSet):
     """文章 API ViewSet"""
 
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
