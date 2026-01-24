@@ -1,32 +1,17 @@
+from django.shortcuts import get_object_or_404
 from ninja import Router
 
 from blog.models import Article
+from blog.schemas import ArticleOut
 
 router = Router()
 
 
-@router.get("/articles")
+@router.get("/articles", response=list[ArticleOut])
 def list_articles(request):
-    articles = Article.objects.all()
-    return [
-        {
-            "id": article.id,
-            "title": article.title,
-            "content": article.content,
-            "is_published": article.is_published,
-            "created_at": article.created_at,
-        }
-        for article in articles
-    ]
+    return Article.objects.all()
 
 
-@router.get("/articles/{article_id}")
+@router.get("/articles/{article_id}", response=ArticleOut)
 def get_article(request, article_id: int):
-    article = Article.objects.get(id=article_id)
-    return {
-        "id": article.id,
-        "title": article.title,
-        "content": article.content,
-        "is_published": article.is_published,
-        "created_at": article.created_at,
-    }
+    return get_object_or_404(Article, id=article_id)
