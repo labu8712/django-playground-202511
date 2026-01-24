@@ -13,7 +13,18 @@ def list_articles(request):
     return Article.objects.all()
 
 
-@router.get("/articles/{article_id}", response=ArticleOut, auth=None)
+@router.get(
+    "/articles/{article_id}",
+    response=ArticleOut,
+    auth=None,
+    openapi_extra={
+        "responses": {
+            404: {
+                "description": "文章不存在",
+            }
+        }
+    },
+)
 def get_article(request, article_id: int):
     return get_object_or_404(Article, id=article_id)
 

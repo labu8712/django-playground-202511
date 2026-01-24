@@ -15,7 +15,12 @@ class AuthBearer(HttpBearer):
         return token_obj.user
 
 
-api = NinjaAPI(auth=AuthBearer())
+api = NinjaAPI(
+    title="Blog API",
+    version="1.0.0",
+    description="Django 大冒險的部落格 API (Django Ninja 版本)",
+    auth=AuthBearer(),
+)
 api.add_router("/blog", blog_router, tags=["文章"])
 
 
