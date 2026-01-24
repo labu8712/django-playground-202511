@@ -8,6 +8,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
 from core import views
+from core.ninja import api as ninja_api
 
 auth_urlpatterns = [
     path(
@@ -83,6 +84,8 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
+    # Django Ninja API
+    path("api-ninja/", ninja_api.urls),
 ]
 
 if settings.DEBUG:
