@@ -4,6 +4,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
 
@@ -29,7 +31,7 @@ class ArticleCreateView(PermissionRequiredMixin, SuccessMessageMixin, CreateView
     template_name = "blog/article_create.html"
     permission_required = "blog.add_article"
     raise_exception = True
-    success_message = "文章「%(title)s」已成功建立。"
+    success_message = _("文章「%(title)s」已成功建立。")
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -43,7 +45,7 @@ class ArticleUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateView
     pk_url_kwarg = "article_id"
     permission_required = "blog.change_article"
     raise_exception = True
-    success_message = "文章「%(title)s」已成功更新。"
+    success_message = _("文章「%(title)s」已成功更新。")
 
 
 class ArticleDeleteView(PermissionRequiredMixin, SuccessMessageMixin, DeleteView):
@@ -55,7 +57,7 @@ class ArticleDeleteView(PermissionRequiredMixin, SuccessMessageMixin, DeleteView
     raise_exception = True
 
     def get_success_message(self, cleaned_data):
-        return f"文章「{self.object.title}」已成功刪除。"
+        return gettext("文章「%(title)s」已成功刪除。") % {"title": self.object.title}
 
 
 @permission_required("blog.delete_article", raise_exception=True)
