@@ -1,16 +1,26 @@
+from typing import Literal
+
 from django.shortcuts import get_object_or_404
-from ninja import PatchDict, Router
+from ninja import PatchDict, Query, Router
 from ninja.errors import HttpError
 
 from blog.models import Article
-from blog.schemas import ArticleIn, ArticleOut
+from blog.schemas import ArticleFilterSchema, ArticleIn, ArticleOut
 
 router = Router()
 
 
 @router.get("/articles", response=list[ArticleOut], auth=None)
-def list_articles(request):
-    return Article.objects.all()
+def list_articles(
+    request,
+    filters: Query[ArticleFilterSchema],
+    ordering: Literal["created_at", "-created_at", "title", "-title"] | None = None,
+):
+    articles = filters.filter(Article.objects.all())
+    if ordering:
+        articles = articles.order_by(ordering)
+
+    return articles
 
 
 @router.get(

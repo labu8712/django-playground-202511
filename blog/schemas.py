@@ -1,4 +1,6 @@
-from ninja import ModelSchema
+from typing import Annotated
+
+from ninja import FilterLookup, FilterSchema, ModelSchema
 
 from blog.models import Article
 
@@ -22,3 +24,11 @@ class ArticleOut(ModelSchema):
             "created_at",
             "updated_at",
         ]
+
+
+class ArticleFilterSchema(FilterSchema):
+    is_published: bool | None = None
+    title__icontains: str | None = None
+    search: Annotated[
+        str | None, FilterLookup(["title__icontains", "content__icontains"])
+    ] = None

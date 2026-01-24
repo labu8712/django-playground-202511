@@ -5,9 +5,17 @@ meta {
 }
 
 get {
-  url: http://127.0.0.1:8000/api-ninja/blog/articles
+  url: http://127.0.0.1:8000/api-ninja/blog/articles?ordering=-title
   body: none
   auth: inherit
+}
+
+params:query {
+  ordering: -title
+  ~search: hello
+  ~title__icontains: hello
+  ~is_published: false
+  ~is_published: true
 }
 
 settings {
