@@ -1,8 +1,13 @@
 import os
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from playwright.sync_api import sync_playwright
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from blog.models import Article
 
 # Playwright 內部使用 async event loop, 需要允許 Django 在 async 環境中執行資料庫操作
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
@@ -113,8 +118,83 @@ class LoginPageTests(StaticLiveServerTestCase):
         assert error_message.count() > 0
 
         assert (
-            error_message.text_content().strip()
+            error_message.text_content().strip()  # type: ignore[reportOptionalMemberAccess]
             == "輸入正確的 使用者名稱 和密碼。請注意兩者皆區分大小寫。"
         )
 
         page.close()
+
+
+class ArticleAPITests(APITestCase):
+    """測試文章建立 API"""
+
+    @classmethod
+    def setUpTestData(cls):
+        # 建立無權限使用者
+        cls.user_without_permission = User.objects.create_user(
+            username="normaluser",
+            password="testpass123",
+        )
+
+        # 建立有權限的使用者
+        cls.user_with_permission = User.objects.create_user(
+            username="authorizeduser",
+            password="testpass123",
+        )
+
+        # 賦予建立文章的權限
+        add_article_permission = Permission.objects.get(codename="add_article")
+        cls.user_with_permission.user_permissions.add(add_article_permission)
+
+    def get_valid_payload(self):
+        """取得有效的文章建立資料"""
+        return {
+            "title": "測試文章",
+            "content": "這是測試內容",
+            "is_published": False,
+        }
+
+    def test_create_article_unauthenticated(self):
+        """未登入時建立文章應回傳 403"""
+        response = self.client.post(
+            "/api-drf/blog/articles",
+            self.get_valid_payload(),
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_create_article_without_permission(self):
+        """已登入但無權限時建立文章應回傳 403"""
+        self.client.force_authenticate(user=self.user_without_permission)
+
+        response = self.client.post(
+            "/api-drf/blog/articles",
+            self.get_valid_payload(),
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_create_article_with_permission(self):
+        """已登入且有權限時應成功建立文章"""
+        self.client.force_authenticate(user=self.user_with_permission)
+
+        response = self.client.post(
+            "/api-drf/blog/articles",
+            self.get_valid_payload(),
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["title"] == "測試文章"
+        assert response.data["content"] == "這是測試內容"
+
+        # 確認文章已建立在資料庫中
+        assert Article.objects.filter(id=response.data["id"]).exists()
+
+        # 確認 created_by 與其他欄位被正確設定
+        article = Article.objects.get(id=response.data["id"])
+        assert article.created_by == self.user_with_permission
+        assert article.title == "測試文章"
+        assert article.content == "這是測試內容"
