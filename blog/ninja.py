@@ -19,7 +19,10 @@ def get_article(request, article_id: int):
 
 @router.post("/articles", response={201: ArticleOut})
 def create_article(request, payload: ArticleIn):
-    article = Article.objects.create(**payload.dict())
+    article = Article.objects.create(
+        **payload.dict(),
+        created_by=request.auth,
+    )
     return 201, article
 
 
