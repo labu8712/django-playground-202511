@@ -1,8 +1,11 @@
+import json
 import os
+from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.test import TestCase
 from playwright.sync_api import sync_playwright
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -198,3 +201,40 @@ class ArticleAPITests(APITestCase):
         assert article.created_by == self.user_with_permission
         assert article.title == "測試文章"
         assert article.content == "這是測試內容"
+
+
+class NinjaArticleAPITests(TestCase):
+    """測試 Ninja 文章 API"""
+
+    @classmethod
+    def setUpTestData(cls):
+        # 建立測試用使用者
+        cls.user = User.objects.create_user(
+            username="testuser",
+            password="testpass123",
+        )
+
+        # 建立測試文章
+        cls.article = Article.objects.create(
+            title="測試文章",
+            content="這是測試內容",
+            is_published=True,
+            created_by=cls.user,
+        )
+
+    def test_get_article_success(self):
+        """測試取得存在的文章"""
+        response = self.client.get(f"/api-ninja/blog/articles/{self.article.id}")
+
+        assert response.status_code == HTTPStatus.OK
+
+        data = json.loads(response.content)
+        assert data["id"] == self.article.id
+        assert data["title"] == "測試文章"
+        assert data["content"] == "這是測試內容"
+
+    def test_get_article_not_found(self):
+        """測試取得不存在的文章"""
+        response = self.client.get("/api-ninja/blog/articles/99999")
+
+        assert response.status_code == HTTPStatus.NOT_FOUND
