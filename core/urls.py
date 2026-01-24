@@ -86,6 +86,8 @@ urlpatterns = [
     ),
     # Django Ninja API
     path("api-ninja/", ninja_api.urls),
+    # i18n
+    path("i18n/", include("django.conf.urls.i18n")),
 ]
 
 if settings.DEBUG:
