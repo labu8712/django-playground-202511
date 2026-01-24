@@ -1,7 +1,9 @@
-{% load django_bootstrap5 %}
+{% load django_bootstrap5 i18n %}
+
+{% get_current_language as LANGUAGE_CODE %}
 
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="{{ LANGUAGE_CODE }}">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,7 +12,7 @@
 
         <title>
             {% block title %}
-                Django 大冒險
+                {% translate "Django 大冒險" %}
             {% endblock title %}
         </title>
 
@@ -35,20 +37,22 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'blog:article_list' %}">文章列表</a>
+                            <a class="nav-link" href="{% url 'blog:article_list' %}">{% translate "文章列表" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin:index' %}">管理後台</a>
+                            <a class="nav-link" href="{% url 'admin:index' %}">{% translate "管理後台" %}</a>
                         </li>
                         {% if user.is_authenticated %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'auth:password_change' %}">變更密碼</a>
+                                <a class="nav-link" href="{% url 'auth:password_change' %}">{% translate "變更密碼" %}</a>
                             </li>
                             <li class="nav-item">
                                 <form method="post" action="{% url 'auth:logout' %}" class="d-inline">
                                     {% csrf_token %}
                                     <button type="submit" class="nav-link btn btn-link">
-                                        登出 ({{ user.username }})
+                                        {% blocktranslate with username=user.username %}
+                      登出 ({{ username }})
+                    {% endblocktranslate %}
                                     </button>
                                 </form>
                             </li>
