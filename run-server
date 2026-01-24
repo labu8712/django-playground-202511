@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -euo pipefail  
+
+# Run migrations
+uv run manage.py migrate  
+
+# Collect static files
+uv run manage.py collectstatic --noinput  
+
+# If DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL and DJANGO_SUPERUSER_PASSWORD are set, create a superuser
+if [ -n "${DJANGO_SUPERUSER_USERNAME:-}" ] && [ -n "${DJANGO_SUPERUSER_EMAIL:-}" ] && [ -n "${DJANGO_SUPERUSER_PASSWORD:-}" ]; then  
+    uv run manage.py createsuperuser --noinput || true
+fi
+
+# Compile messages
+uv run manage.py compilemessages  
+
+# Run server
+uv run gunicorn core.wsgi --workers 4 --bind 0.0.0.0:8000

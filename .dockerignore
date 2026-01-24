@@ -1,0 +1,29 @@
+# Ignore all files
+*
+
+# Allow list
+
+## uv
+!pyproject.toml
+!uv.lock
+
+## Python files
+!**/*.py
+
+## Translation files
+!**/*.po
+
+## Static files
+!**/*.html
+!**/*.css
+!**/*.js
+!static/
+
+## Locale files
+!locale/
+
+## Scripts
+!run-server
+
+# But not these files
+grid_demo.html
