@@ -25,6 +25,9 @@ dev = [
     "ipython>=9.7.0",
     "werkzeug>=3.1.4",
 ]
+test = [
+    "playwright>=1.57.0",
+]
 
 
 [tool.uv]
